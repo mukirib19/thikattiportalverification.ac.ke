@@ -1,0 +1,13 @@
+# Render Static Site Configuration
+# See: https://render.com/docs/yaml-spec
+
+services:
+  - type: web
+    name: thika-tti-portal
+    runtime: static
+    buildCommand: ""
+    staticPublishPath: .
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=3600

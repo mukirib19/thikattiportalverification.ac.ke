@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Progress Report - Module 2 (November 2025)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            color: #333333;
+            line-height: 1.6;
+        }
+
+        /* ===== LOADING SPINNER ===== */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.4s ease;
+        }
+
+        .loader-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e0f0fa;
+            border-top: 5px solid #4da8da;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loader-text {
+            margin-top: 16px;
+            font-size: 16px;
+            color: #4da8da;
+            font-weight: 500;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .content {
+            display: none;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .content.visible {
+            display: block;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            border-bottom: 3px solid #4da8da;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #4da8da;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header .ref-no {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 8px;
+        }
+
+        .header h2 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .header .diploma-badge {
+            display: inline-block;
+            background-color: #4da8da;
+            color: #ffffff;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== STUDENT INFO ===== */
+        .student-info {
+            background-color: #f0f8ff;
+            border: 1px solid #d0e8f5;
+            border-radius: 10px;
+            padding: 20px 25px;
+            margin-bottom: 25px;
+        }
+
+        .student-info h3 {
+            color: #4da8da;
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #4da8da;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-item .label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .info-item .value {
+            font-size: 15px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* ===== RESULTS TABLE ===== */
+        .results-section {
+            margin-bottom: 25px;
+        }
+
+        .results-section h3 {
+            color: #4da8da;
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #4da8da;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .results-table thead th {
+            background-color: #4da8da;
+            color: #ffffff;
+            padding: 12px 10px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .results-table tbody td {
+            padding: 12px 10px;
+            font-size: 14px;
+            text-align: center;
+            border-bottom: 1px solid #e8f4fa;
+        }
+
+        .results-table tbody tr:nth-child(even) {
+            background-color: #f7fbfe;
+        }
+
+        .results-table tbody tr:hover {
+            background-color: #e8f4fa;
+        }
+
+        .results-table tbody td:first-child {
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .grade-badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .grade-pass {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .grade-credit {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .grade-distinction {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+
+        /* ===== OVERALL RESULTS ===== */
+        .overall-results {
+            background-color: #f0f8ff;
+            border: 1px solid #d0e8f5;
+            border-radius: 10px;
+            padding: 20px 25px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .overall-item {
+            text-align: center;
+        }
+
+        .overall-item .overall-label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .overall-item .overall-value {
+            font-size: 28px;
+            color: #4da8da;
+            font-weight: 700;
+        }
+
+        .overall-item .overall-remark {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1565c0;
+        }
+
+        /* ===== GRADING KEY ===== */
+        .grading-key {
+            margin-bottom: 25px;
+        }
+
+        .grading-key h3 {
+            color: #4da8da;
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #4da8da;
+        }
+
+        .grading-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .grading-table th {
+            background-color: #4da8da;
+            color: #ffffff;
+            padding: 10px;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .grading-table td {
+            padding: 8px 10px;
+            font-size: 13px;
+            text-align: center;
+            border-bottom: 1px solid #e8f4fa;
+        }
+
+        .grading-table tr:nth-child(even) {
+            background-color: #f7fbfe;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 3px solid #4da8da;
+            margin-top: 30px;
+        }
+
+        .footer p {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 5px;
+            line-height: 1.5;
+        }
+
+        .footer .iso {
+            color: #4da8da;
+            font-weight: 600;
+        }
+
+        /* ===== NAV BUTTON ===== */
+        .nav-btn {
+            display: inline-block;
+            background-color: #4da8da;
+            color: #ffffff;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .nav-btn:hover {
+            background-color: #3a8fbf;
+            transform: translateY(-1px);
+        }
+
+        .nav-btn:active {
+            transform: translateY(0);
+        }
+
+        .nav-container {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        /* ===== PRINT BUTTON ===== */
+        .print-btn {
+            display: inline-block;
+            background-color: #ffffff;
+            color: #4da8da;
+            padding: 10px 25px;
+            border: 2px solid #4da8da;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+
+        .print-btn:hover {
+            background-color: #4da8da;
+            color: #ffffff;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 18px;
+            }
+
+            .header h2 {
+                font-size: 16px;
+            }
+
+            .results-table thead th,
+            .results-table tbody td {
+                padding: 8px 5px;
+                font-size: 12px;
+            }
+
+            .overall-results {
+                flex-direction: column;
+            }
+
+            .overall-item .overall-value {
+                font-size: 22px;
+            }
+
+            .content {
+                padding: 10px;
+            }
+
+            .nav-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .print-btn {
+                margin-left: 0;
+            }
+        }
+
+        @media print {
+            .loader-overlay {
+                display: none !important;
+            }
+            .nav-container {
+                display: none !important;
+            }
+            .content {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Spinner -->
+    <div class="loader-overlay" id="loader">
+        <div class="spinner"></div>
+        <p class="loader-text">Loading Academic Report...</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content" id="content">
+
+        <!-- Header -->
+        <div class="header">
+            <img src="https://www.eduopinions.com/wp-content/uploads/2024/05/Thika-Technical-Training-Institute.png" alt="TTTI Logo" class="logo">
+            <h1>Thika Technical Training Institute</h1>
+            <p class="ref-no">TTTI/HRM/DP/01/RF/1/12</p>
+            <h2>Academic Progress Report</h2>
+            <p class="diploma-badge">Level 6 Diploma &bull; Joined 2022</p>
+        </div>
+
+        <!-- Student Info -->
+        <div class="student-info">
+            <h3>Student Information</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="label">Full Name</span>
+                    <span class="value">Maina Benard Mukiri</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Admission No</span>
+                    <span class="value">42298</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Course</span>
+                    <span class="value">Diploma in Information Communication Technology</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Module</span>
+                    <span class="value">Module 2</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Examination Series</span>
+                    <span class="value">November 2025</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Qualification Level</span>
+                    <span class="value">Level 6 Diploma</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Table -->
+        <div class="results-section">
+            <h3>End of Module 2 Results</h3>
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Subject Name</th>
+                        <th>Course Work (X/30)</th>
+                        <th>Exam (X/70)</th>
+                        <th>Total</th>
+                        <th>Grade</th>
+                        <th>Remark</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Demonstrate Digital Literacy</td>
+                        <td>15</td>
+                        <td>35</td>
+                        <td>50</td>
+                        <td>5</td>
+                        <td><span class="grade-badge grade-pass">Pass</span></td>
+                    </tr>
+                    <tr>
+                        <td>Demonstrate Entrepreneurial Skills</td>
+                        <td>10</td>
+                        <td>40</td>
+                        <td>50</td>
+                        <td>5</td>
+                        <td><span class="grade-badge grade-pass">Pass</span></td>
+                    </tr>
+                    <tr>
+                        <td>Apply Basic Electronics</td>
+                        <td>12</td>
+                        <td>38</td>
+                        <td>78</td>
+                        <td>5</td>
+                        <td><span class="grade-badge grade-pass">Pass</span></td>
+                    </tr>
+                    <tr>
+                        <td>Install Computer Software</td>
+                        <td>18</td>
+                        <td>60</td>
+                        <td>76</td>
+                        <td>3</td>
+                        <td><span class="grade-badge grade-credit">Credit</span></td>
+                    </tr>
+                    <tr>
+                        <td>Perform Computer Repair and Maintenance</td>
+                        <td>23</td>
+                        <td>53</td>
+                        <td>50</td>
+                        <td>3</td>
+                        <td><span class="grade-badge grade-credit">Credit</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Overall Results -->
+        <div class="overall-results">
+            <div class="overall-item">
+                <span class="overall-label">Average Score</span>
+                <span class="overall-value">60.80%</span>
+            </div>
+            <div class="overall-item">
+                <span class="overall-label">Average Grade</span>
+                <span class="overall-value">4.2</span>
+            </div>
+            <div class="overall-item">
+                <span class="overall-label">Overall Result</span>
+                <span class="overall-remark" style="font-size: 24px;">CREDIT</span>
+            </div>
+        </div>
+
+        <!-- Grading Key -->
+        <div class="grading-key">
+            <h3>Key to Grading</h3>
+            <table class="grading-table">
+                <thead>
+                    <tr>
+                        <th>Percentage Range</th>
+                        <th>Grade</th>
+                        <th>Remark</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>90 - 100%</td>
+                        <td>1</td>
+                        <td><span class="grade-badge grade-distinction">Distinction</span></td>
+                    </tr>
+                    <tr>
+                        <td>80 - 89%</td>
+                        <td>2</td>
+                        <td><span class="grade-badge grade-distinction">Distinction</span></td>
+                    </tr>
+                    <tr>
+                        <td>70 - 79%</td>
+                        <td>3</td>
+                        <td><span class="grade-badge grade-credit">Credit</span></td>
+                    </tr>
+                    <tr>
+                        <td>60 - 69%</td>
+                        <td>4</td>
+                        <td><span class="grade-badge grade-credit">Credit</span></td>
+                    </tr>
+                    <tr>
+                        <td>50 - 59%</td>
+                        <td>5</td>
+                        <td><span class="grade-badge grade-pass">Pass</span></td>
+                    </tr>
+                    <tr>
+                        <td>40 - 49%</td>
+                        <td>6</td>
+                        <td><span class="grade-badge grade-pass">Pass</span></td>
+                    </tr>
+                    <tr>
+                        <td>39% and below</td>
+                        <td>7</td>
+                        <td><span class="grade-badge" style="background-color:#ffebee;color:#c62828;">Fail</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-container">
+            <a href="module1.html" class="nav-btn">View Module 1 Results &rarr;</a>
+            <button class="print-btn" onclick="window.print()">&#128438; Print Report</button>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Vision:</strong> To be the Centre of Excellence in Technical Industrial Vocational and Entrepreneurship Training.</p>
+            <p><strong>Mission:</strong> To Provide Quality Market Driven Technical Industrial Vocational Entrepreneurship Training and Development for a Dynamic Society.</p>
+            <p class="iso">Thika TTI is ISO 9001:2008 Certified</p>
+        </div>
+    </div>
+
+    <script>
+        // 3-second loading spinner
+        window.addEventListener('load', function () {
+            setTimeout(function () {
+                var loader = document.getElementById('loader');
+                var content = document.getElementById('content');
+                loader.classList.add('hidden');
+                content.classList.add('visible');
+            }, 3000);
+        });
+    </script>
+
+</body>
+</html>
